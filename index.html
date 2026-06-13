@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic — Quel type de collaborateur es-tu vraiment ?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #F5EDE0;
+    --bg2:    #FFFFFF;
+    --bg3:    #E8DDD0;
+    --dark:   #4A2818;
+    --amber:  #C2681A;
+    --amber-l:#e07c20;
+    --amber-d:rgba(194,104,26,0.12);
+    --amber-b:rgba(194,104,26,0.3);
+    --text:   #4A2818;
+    --muted:  #9A7A68;
+    --green:  #059669;
+    --blue:   #2563eb;
+    --purple: #7c3aed;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-top {
+    width: 100%;
+    background: var(--dark);
+    padding: 3rem 1.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .brand-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    border: 1px solid var(--amber-b);
+    padding: 0.35rem 1.1rem;
+    border-radius: 2px;
+  }
+
+  #hero h1 {
+    font-size: clamp(2.4rem, 8vw, 4.2rem);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+    color: #FFF3E8;
+  }
+
+  #hero h1 em {
+    font-style: normal;
+    color: var(--amber);
+  }
+
+  .hero-sub-dark {
+    font-size: clamp(0.88rem, 2.5vw, 1rem);
+    color: #D4A882;
+    max-width: 460px;
+    margin-top: 0.75rem;
+    font-weight: 500;
+    line-height: 1.7;
+  }
+
+  .hero-bottom {
+    width: 100%;
+    background: var(--bg);
+    padding: 2.5rem 1.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-start {
+    background: var(--amber);
+    color: #FFF3E8;
+    border: none;
+    padding: 1rem 2.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+    max-width: 380px;
+    margin-bottom: 2rem;
+  }
+  .btn-start:hover { background: var(--amber-l); transform: translateY(-2px); }
+
+  .meta-row {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .meta-item span { color: var(--amber); font-weight: 900; }
+
+  /* ── QUIZ ── */
+  #quiz { display: none; max-width: 700px; margin: 0 auto; }
+
+  .quiz-header {
+    background: var(--dark);
+    padding: 1rem 1.25rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #D4A882;
+    margin-bottom: 0.5rem;
+  }
+  .progress-info .qnum { color: var(--amber); }
+
+  .progress-bar-bg {
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--amber);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  .quiz-body { padding: 1.5rem 1.25rem; }
+
+  .question-card {
+    background: var(--bg2);
+    border: 1px solid var(--bg3);
+    border-radius: 6px;
+    padding: 1.75rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .situation-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.9rem;
+  }
+
+  .question-text {
+    font-size: clamp(0.98rem, 3vw, 1.12rem);
+    font-weight: 700;
+    line-height: 1.55;
+    margin-bottom: 1.6rem;
+    color: var(--text);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 0.65rem; }
+
+  .option-btn {
+    background: var(--bg);
+    border: 1.5px solid var(--bg3);
+    color: var(--text);
+    padding: 0.9rem 1.1rem;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.86rem;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.18s;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+  .option-btn:hover { border-color: var(--amber); background: var(--amber-d); }
+  .option-btn.selected { border-color: var(--amber); background: var(--amber-d); }
+
+  .option-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    background: var(--bg3);
+    border-radius: 2px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option-btn.selected .option-letter { background: var(--amber); color: #FFF3E8; }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn-nav {
+    background: transparent;
+    border: 1.5px solid var(--bg3);
+    color: var(--muted);
+    padding: 0.7rem 1.25rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.18s;
+  }
+  .btn-nav:hover { border-color: var(--amber); color: var(--amber); }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-next {
+    background: var(--amber);
+    border: none;
+    color: #FFF3E8;
+    padding: 0.7rem 1.75rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.18s;
+    flex: 1;
+  }
+  .btn-next:hover { background: var(--amber-l); }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── RESULTS ── */
+  #results { display: none; max-width: 700px; margin: 0 auto; }
+
+  .results-top {
+    background: var(--dark);
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+
+  .results-top h2 {
+    font-size: clamp(1.8rem, 6vw, 3rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #FFF3E8;
+    margin-bottom: 0.5rem;
+  }
+  .results-top h2 em { font-style: normal; color: var(--amber); }
+  .results-top p { color: #D4A882; font-size: 0.85rem; font-weight: 500; margin-top: 0.5rem; }
+
+  .results-body { padding: 1.75rem 1.25rem; }
+
+  /* Bars */
+  .style-bars { display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 2rem; }
+  .style-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem; }
+  .style-name { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .style-pct { font-size: 1rem; font-weight: 900; }
+  .bar-bg { height: 7px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+
+  /* Dominant card */
+  .dominant-card {
+    background: var(--bg2);
+    border-left: 4px solid var(--amber);
+    border-radius: 6px;
+    padding: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dominant-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.6rem;
+  }
+
+  .dominant-card h3 {
+    font-size: 1.3rem;
+    font-weight: 900;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .dominant-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.75;
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .watch-out {
+    background: rgba(194,104,26,0.08);
+    border-left: 2.5px solid var(--amber);
+    padding: 0.75rem 1rem;
+    border-radius: 2px;
+    font-size: 0.82rem;
+    color: var(--text);
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .watch-out strong { color: var(--amber); }
+
+  /* Manager tip */
+  .manager-tip {
+    background: var(--dark);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .manager-tip .tip-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.6rem;
+  }
+  .manager-tip p {
+    font-size: 0.88rem;
+    color: #C8B09A;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+  .manager-tip strong { color: #FFF3E8; }
+
+  /* CTA */
+  .cta-block {
+    background: var(--bg2);
+    border: 1.5px solid var(--bg3);
+    border-radius: 6px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .cta-block h3 { font-size: 1rem; font-weight: 800; margin-bottom: 0.4rem; color: var(--text); }
+  .cta-block p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.25rem; font-weight: 500; line-height: 1.6; }
+
+  .btn-cta {
+    display: inline-block;
+    background: var(--amber);
+    color: #FFF3E8;
+    border: none;
+    padding: 0.9rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.18s;
+    margin: 0.3rem;
+    text-decoration: none;
+  }
+  .btn-cta:hover { background: var(--amber-l); transform: translateY(-1px); }
+
+  .btn-cta-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--amber);
+    border: 1.5px solid var(--amber-b);
+    padding: 0.9rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.18s;
+    margin: 0.3rem;
+  }
+  .btn-cta-outline:hover { background: var(--amber-d); }
+
+  .custom-tool-block {
+    background: #1a1008;
+    border-radius: 6px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  .custom-tool-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .custom-tool-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 0.75rem;
+  }
+  .custom-tool-title {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+  .custom-tool-desc {
+    font-size: 0.85rem;
+    color: #9a7a68;
+    line-height: 1.7;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    max-width: 320px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .btn-custom {
+    display: inline-block;
+    background: var(--amber);
+    color: #FFF3E8;
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.18s;
+    text-decoration: none;
+    width: 100%;
+    max-width: 340px;
+  }
+  .btn-custom:hover { background: var(--amber-l); transform: translateY(-1px); }
+
+  .footer-sig {
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1.5rem 0 2rem;
+    border-top: 1px solid var(--bg3);
+  }
+  .footer-sig span { color: var(--amber); }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 1.25rem 1rem; }
+    .dominant-card { padding: 1.25rem 1rem; }
+    .btn-cta, .btn-cta-outline { width: 100%; display: block; margin: 0.3rem 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-top">
+    <div class="brand-tag">OTHMANE BELKARIA · Diagnostic</div>
+    <h1>Quel type de<br>collaborateur<br>es-tu <em>vraiment</em> ?</h1>
+    <p class="hero-sub-dark">12 situations concrètes. Pas de bonne réponse.<br>Ton profil de collaborateur en 5 minutes.</p>
+  </div>
+  <div class="hero-bottom">
+    <button class="btn-start" onclick="startQuiz()">Commencer le diagnostic →</button>
+    <div class="meta-row">
+      <div class="meta-item"><span>12</span> situations</div>
+      <div class="meta-item"><span>4</span> profils</div>
+      <div class="meta-item"><span>~5 min</span> chrono</div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="quiz-header">
+    <div class="progress-info">
+      <span>Question <span class="qnum" id="qnum">1</span> / 12</span>
+      <span id="qtheme">—</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progbar" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="quiz-body">
+    <div class="question-card">
+      <div class="situation-label" id="sit-label">Situation</div>
+      <div class="question-text" id="qtext"></div>
+      <div class="options" id="opts"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← Précédent</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()" disabled>Suivant →</button>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="results-top">
+    <div class="brand-tag">Ton profil collaborateur</div>
+    <h2>Voilà le collaborateur<br><em>que tu es</em></h2>
+    <p>Résultat basé sur tes 12 réponses — sans filtre.</p>
+  </div>
+  <div class="results-body">
+    <div class="style-bars" id="style-bars"></div>
+    <div class="dominant-card" id="dominant-card"></div>
+    <div class="manager-tip" id="manager-tip"></div>
+    <div class="cta-block">
+      <h3>Tu manages une équipe ?</h3>
+      <p>Découvre ton style de management — et comment il interagit avec les profils de tes collaborateurs.</p>
+      <a class="btn-cta" href="#">Faire le diagnostic manager →</a>
+    </div>
+
+    <div class="custom-tool-block">
+      <div class="custom-tool-icon">🛠</div>
+      <div class="custom-tool-label">Sur mesure</div>
+      <h3 class="custom-tool-title">Un outil comme celui-ci<br>pour ton équipe ?</h3>
+      <p class="custom-tool-desc">Diagnostic personnalisé, aux couleurs de ton entreprise, adapté à tes problématiques terrain.</p>
+      <a class="btn-custom" href="linkedin://in/othmane-belkaria" onclick="setTimeout(()=>window.open('https://www.linkedin.com/in/othmane-belkaria','_blank'),500)">Contacte-moi sur LinkedIn →</a>
+    </div>
+    <div class="footer-sig">Créé par <span>OTHMANE BELKARIA</span></div>
+  </div>
+</section>
+
+<script>
+// DM = Débutant Motivé | ED = Expérimenté Démotivé | CD = Capable qui Doute | AU = Autonome
+const PROFILES = {
+  DM: { name: 'Le Débutant motivé',       color: '#C2681A', icon: '🌱' },
+  ED: { name: "L'Expérimenté démotivé",   color: '#2563eb', icon: '😤' },
+  CD: { name: 'Le Capable qui doute',     color: '#7c3aed', icon: '😰' },
+  AU: { name: "L'Autonome",               color: '#059669', icon: '🦅' }
+};
+
+const DESCRIPTIONS = {
+  DM: {
+    desc: "Tu es dans l'action, tu veux apprendre, tu t'investis. Ton énergie est un vrai atout pour l'équipe. Mais tu manques encore de recul sur certaines situations — et c'est normal, ça vient avec le temps et l'expérience.",
+    vigilance: "Attention à vouloir aller trop vite. Bien faire les choses prend du temps. Pose des questions avant d'agir, et accepte d'être guidé sans le vivre comme un manque de confiance.",
+    manager: "Un manager Directif est fait pour toi en ce moment — il te donne le cadre dont tu as besoin pour progresser vite. Un manager trop laxiste risque de te laisser sans repères."
+  },
+  ED: {
+    desc: "Tu sais faire. Tu maîtrises. Mais quelque chose s'est cassé en route — la motivation n'est plus là comme avant. Tu fais le job, mais sans l'énergie d'avant. C'est souvent le signe qu'il manque quelque chose : de la reconnaissance, du challenge, du sens.",
+    vigilance: "Le danger c'est de t'installer dans cet état sans en parler. Un manque de motivation qui dure finit par affecter ta réputation, même si la qualité de ton travail tient encore.",
+    manager: "Tu as besoin d'un manager Persuasif ou Participatif — quelqu'un qui te réengage, t'explique le sens de ce que tu fais et te redonne envie. Un manager Directif sur toi, c'est l'explosion garantie."
+  },
+  CD: {
+    desc: "Tu as les compétences. Vraiment. Mais tu passes beaucoup de temps à douter, à te demander si c'est bien, si c'est suffisant. Tu attends souvent une validation externe avant d'avancer. Ce profil est très courant chez des gens très compétents — paradoxalement.",
+    vigilance: "Le doute permanent peut te freiner et te faire rater des opportunités. Apprends à distinguer la prudence saine de l'autocensure. Tu es plus capable que tu ne le crois.",
+    manager: "Tu as besoin d'un manager Participatif — quelqu'un qui t'implique, te fait confiance et te montre que ton avis compte. Avec un Délégateur, tu t'épanouiras pleinement une fois que tu auras appris à te faire confiance."
+  },
+  AU: {
+    desc: "Tu sais ce que tu as à faire, tu le fais, et tu le fais bien. Tu n'as pas besoin qu'on te surveille ou qu'on t'explique — tu prends tes responsabilités et tu livres. C'est le profil que tout manager rêve d'avoir dans son équipe.",
+    vigilance: "Attention à ne pas devenir trop solitaire dans ton travail. Partager, transmettre et collaborer, même quand tu n'en as pas besoin techniquement, renforce le collectif et ta crédibilité.",
+    manager: "Tu fonctionnes parfaitement avec un manager Délégateur. Un manager trop Directif sur toi sera vécu comme du micro-management — source de frustration des deux côtés."
+  }
+};
+
+const QUESTIONS = [
+  {
+    sit: 'Situation 1 — Maîtrise du poste',
+    q: "Quand tu dois réaliser une tâche clé de ton poste, tu te sens comment ?",
+    opts: [
+      { text: "J'apprends encore. J'ai besoin qu'on me montre ou qu'on m'explique pour bien faire.", style: 'DM' },
+      { text: "Je maîtrise parfaitement. Je pourrais former quelqu'un d'autre sur ce sujet.", style: 'ED' },
+      { text: "Je sais faire mais je vérifie souvent que je fais bien. J'ai besoin de confirmation.", style: 'CD' },
+      { text: "Je gère de façon totalement autonome. Je sais quoi faire et comment m'adapter.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 2 — Engagement au quotidien',
+    q: "Comment tu décrirais honnêtement ton niveau d'engagement au travail ces derniers mois ?",
+    opts: [
+      { text: "Très élevé. Je suis enthousiaste, je veux apprendre et prouver ce que je vaux.", style: 'DM' },
+      { text: "En baisse. Je fais le nécessaire mais je ne m'investis plus comme avant.", style: 'ED' },
+      { text: "Variable. Je m'investis beaucoup mais le doute freine parfois mon élan.", style: 'CD' },
+      { text: "Constant et élevé. Je suis pleinement engagé et je prends mes responsabilités.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 3 — Face à un problème complexe',
+    q: "Tu fais face à un problème complexe que tu n'as jamais rencontré. Qu'est-ce que tu fais ?",
+    opts: [
+      { text: "Je vais voir mon manager ou un collègue expérimenté pour qu'il m'aide à le résoudre.", style: 'DM' },
+      { text: "Je sais le résoudre mais je n'ai plus forcément envie de m'y investir à fond.", style: 'ED' },
+      { text: "J'essaie de le résoudre seul mais j'ai peur de me tromper. Je cherche une validation.", style: 'CD' },
+      { text: "Je prends le problème en main, j'analyse, je décide et j'avance.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 4 — Rapport à la direction',
+    q: "Ton manager te donne une instruction avec laquelle tu n'es pas d'accord. Tu fais quoi ?",
+    opts: [
+      { text: "Je l'applique sans trop questionner. Je manque encore d'expérience pour juger.", style: 'DM' },
+      { text: "Je l'applique mais intérieurement je me dis que c'est encore une décision mal pensée.", style: 'ED' },
+      { text: "Je veux donner mon avis mais j'hésite — et si j'ai tort et que ça se retourne contre moi ?", style: 'CD' },
+      { text: "J'exprime mon point de vue clairement, j'argumente, et j'applique la décision finale.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 5 — Prise d\'initiative',
+    q: "Tu identifies une façon d'améliorer un process dans ton équipe. Quelle est ta réaction naturelle ?",
+    opts: [
+      { text: "J'en parle à mon manager pour avoir son accord avant de faire quoi que ce soit.", style: 'DM' },
+      { text: "Je vois le problème depuis longtemps. J'ai arrêté de proposer, ça ne sert à rien.", style: 'ED' },
+      { text: "J'ai une idée mais je ne suis pas sûr qu'elle soit bonne. J'hésite à la partager.", style: 'CD' },
+      { text: "Je prépare une proposition concrète avec des arguments et je la présente.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 6 — Autonomie',
+    q: "Ton manager te dit : \"Je te fais confiance, gère ce projet comme tu le sens.\" Tu vis ça comment ?",
+    opts: [
+      { text: "C'est flatteur mais stressant. J'aurais besoin d'un cadre plus précis pour bien faire.", style: 'DM' },
+      { text: "Ça ne me motive pas particulièrement. La confiance sans reconnaissance ne suffit plus.", style: 'ED' },
+      { text: "J'apprécie la confiance mais j'ai peur de mal choisir. J'irai quand même vérifier.", style: 'CD' },
+      { text: "C'est exactement ce dont j'ai besoin. Je livre des résultats et je rends compte.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 7 — Reconnaissance',
+    q: "Ton travail est reconnu publiquement par ta hiérarchie. Quel effet ça a sur toi ?",
+    opts: [
+      { text: "C'est très important pour moi. Ça me donne envie de continuer à m'investir.", style: 'DM' },
+      { text: "Ça fait plaisir sur le moment mais ça ne compense pas ce qui manque au fond.", style: 'ED' },
+      { text: "Je suis soulagé et content. Ça confirme que mon travail est à la hauteur.", style: 'CD' },
+      { text: "Je l'apprécie mais ce n'est pas ce qui me motive. La qualité du travail suffit.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 8 — Gestion d\'erreur',
+    q: "Tu réalises que tu as fait une erreur sur une tâche importante. Comment tu réagis ?",
+    opts: [
+      { text: "Je le signale immédiatement à mon manager et je lui demande comment corriger.", style: 'DM' },
+      { text: "Je corrige si je peux, mais intérieurement je me dis que le système ne facilite pas les choses.", style: 'ED' },
+      { text: "Je me remets fortement en question. Je rumine et j'ai du mal à avancer.", style: 'CD' },
+      { text: "J'analyse ce qui s'est passé, je corrige, je tire la leçon et je passe à autre chose.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 9 — Rapport au sens',
+    q: "Quelle est ta relation avec les objectifs qu'on te fixe au travail ?",
+    opts: [
+      { text: "Je les accepte tels quels. J'ai encore besoin de comprendre comment y contribuer.", style: 'DM' },
+      { text: "Je les trouve souvent déconnectés de la réalité du terrain. Ça me démotive.", style: 'ED' },
+      { text: "Je veux y contribuer mais je doute parfois d'en être capable.", style: 'CD' },
+      { text: "Je les intègre, je les fais miens et je m'organise pour les atteindre.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 10 — Relation à l\'équipe',
+    q: "Un collègue moins expérimenté que toi te demande de l'aide sur une tâche que tu maîtrises. Tu fais quoi ?",
+    opts: [
+      { text: "Je l'aide du mieux que je peux même si je ne maîtrise pas tout non plus.", style: 'DM' },
+      { text: "Je l'aide mais je me demande pourquoi le management ne gère pas mieux la montée en compétences.", style: 'ED' },
+      { text: "J'aide mais j'espère ne pas me tromper — et s'il s'avère que mon explication était fausse ?", style: 'CD' },
+      { text: "Je prends le temps de lui expliquer clairement. Transmettre fait partie de mon rôle.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 11 — Motivation profonde',
+    q: "Qu'est-ce qui te donne le plus envie de venir travailler en ce moment ?",
+    opts: [
+      { text: "L'envie d'apprendre, de progresser et de montrer ce dont je suis capable.", style: 'DM' },
+      { text: "Honnêtement, c'est plus l'habitude ou la nécessité que la passion.", style: 'ED' },
+      { text: "L'envie de bien faire et d'être utile, même si je doute parfois de ma valeur ajoutée.", style: 'CD' },
+      { text: "L'impact que j'ai sur les résultats et la confiance qu'on me donne pour agir.", style: 'AU' }
+    ]
+  },
+  {
+    sit: 'Situation 12 — Projection',
+    q: "Dans 2 ans, où veux-tu en être professionnellement ?",
+    opts: [
+      { text: "Avoir progressé, maîtriser mon poste et être reconnu comme quelqu'un de fiable.", style: 'DM' },
+      { text: "Idéalement avoir retrouvé un environnement qui me donne à nouveau envie de m'investir.", style: 'ED' },
+      { text: "Être plus sûr de moi, oser prendre plus de responsabilités sans douter constamment.", style: 'CD' },
+      { text: "Avoir élargi mon périmètre d'action et transmis mes compétences à d'autres.", style: 'AU' }
+    ]
+  }
+];
+
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+
+function startQuiz() {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQ();
+  window.scrollTo(0, 0);
+}
+
+function renderQ() {
+  const q = QUESTIONS[current];
+  document.getElementById('qnum').textContent = current + 1;
+  document.getElementById('qtheme').textContent = q.sit.split('—')[1]?.trim() || '';
+  document.getElementById('progbar').style.width = ((current / QUESTIONS.length) * 100) + '%';
+  document.getElementById('sit-label').textContent = q.sit;
+  document.getElementById('qtext').textContent = q.q;
+
+  const opts = document.getElementById('opts');
+  opts.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (answers[current] === o.style ? ' selected' : '');
+    btn.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${o.text}</span>`;
+    btn.onclick = () => selectOpt(o.style, btn);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('btn-prev').disabled = current === 0;
+  document.getElementById('btn-next').disabled = answers[current] === null;
+  document.getElementById('btn-next').textContent = current === QUESTIONS.length - 1 ? 'Voir mon profil →' : 'Suivant →';
+}
+
+function selectOpt(style, btn) {
+  answers[current] = style;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('btn-next').disabled = false;
+}
+
+function nextQ() {
+  if (current < QUESTIONS.length - 1) { current++; renderQ(); window.scrollTo(0, 0); }
+  else showResults();
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQ(); window.scrollTo(0, 0); }
+}
+
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const counts = { DM: 0, ED: 0, CD: 0, AU: 0 };
+  answers.forEach(a => { if (a) counts[a]++; });
+  const total = QUESTIONS.length;
+  const pcts = {};
+  Object.keys(counts).forEach(k => pcts[k] = Math.round((counts[k] / total) * 100));
+
+  const order = Object.entries(pcts).sort((a,b) => b[1]-a[1]);
+  const dominant = order[0][0];
+  const dominantPct = order[0][1];
+  const second = order[1][0];
+  const secondPct = order[1][1];
+
+  // Profils incompatibles — ne peuvent pas être affichés ensemble
+  const INCOMPATIBLE = [
+    ['DM', 'ED'], // Débutant motivé vs Expérimenté démotivé
+    ['DM', 'AU'], // Débutant vs Autonome (trop éloignés)
+  ];
+  const isIncompatible = INCOMPATIBLE.some(pair =>
+    (pair[0] === dominant && pair[1] === second) ||
+    (pair[1] === dominant && pair[0] === second)
+  );
+
+  // Seuil plus strict : écart ≤ 10pts, second ≥ 30%, et profils compatibles
+  const isDual = !isIncompatible && (dominantPct - secondPct) <= 10 && secondPct >= 30;
+
+  // Bars
+  const barsEl = document.getElementById('style-bars');
+  barsEl.innerHTML = '';
+  order.forEach(([k, pct]) => {
+    const p = PROFILES[k];
+    const div = document.createElement('div');
+    div.innerHTML = `
+      <div class="style-bar-header">
+        <span class="style-name" style="color:${p.color}">${p.icon} ${p.name}</span>
+        <span class="style-pct" style="color:${p.color}">${pct}%</span>
+      </div>
+      <div class="bar-bg">
+        <div class="bar-fill" style="background:${p.color};width:0%" data-w="${pct}"></div>
+      </div>`;
+    barsEl.appendChild(div);
+  });
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill').forEach(b => { b.style.width = b.dataset.w + '%'; });
+  }, 100);
+
+  // Dominant card
+  const dc = document.getElementById('dominant-card');
+  const dp = PROFILES[dominant];
+  const dd = DESCRIPTIONS[dominant];
+
+  if (isDual) {
+    const dp2 = PROFILES[second];
+    const dd2 = DESCRIPTIONS[second];
+    dc.style.borderLeftColor = dp.color;
+    dc.innerHTML = `
+      <div class="dominant-label">→ Profil mixte</div>
+      <h3>${dp.icon} ${dp.name} ${dominantPct}% · ${dp2.icon} ${dp2.name} ${secondPct}%</h3>
+      <p class="dominant-desc">${dd.desc}</p>
+      <p class="dominant-desc">${dd2.desc}</p>
+      <div class="watch-out"><strong>⚠ Point de vigilance :</strong> ${dd.vigilance}</div>`;
+  } else {
+    dc.style.borderLeftColor = dp.color;
+    dc.innerHTML = `
+      <div class="dominant-label">→ Ton profil dominant</div>
+      <h3>${dp.icon} ${dp.name} — ${dominantPct}%</h3>
+      <p class="dominant-desc">${dd.desc}</p>
+      <div class="watch-out"><strong>⚠ Point de vigilance :</strong> ${dd.vigilance}</div>`;
+  }
+
+  // Manager tip
+  const mt = document.getElementById('manager-tip');
+  mt.innerHTML = `
+    <div class="tip-label">→ Le manager qu'il te faut</div>
+    <p>${DESCRIPTIONS[dominant].manager}</p>`;
+}
+
+function resetQuiz() {
+  current = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
